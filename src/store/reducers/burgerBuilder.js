@@ -4,7 +4,8 @@ import { updateObject } from '../Utility.js';
 const initialState = {
     ingredients: null,
     totalPrice: 4,
-    error: false
+    error: false,
+    building: false
 }
 
 const INGREDIENT_PRICES = {
@@ -25,17 +26,17 @@ function initializeIngredients(action, state) {
         cheese: action.ingredients.cheese,
         meat: action.ingredients.meat
     };
-    return updateObject(state, { ingredients: ingredients, totalPrice: 4, error: false });
-}
-
-function removeIngredient(state, action) {
-    const updatedIngredients = updateObject(state.ingredients, { [action.ingredientType]: state.ingredients[action.ingredientType] - 1 });
-    return updateObject(state, { ingredients: updatedIngredients, totalPrice: state.totalPrice - INGREDIENT_PRICES[action.ingredientType] });
+    return updateObject(state, { ingredients: ingredients, totalPrice: 4, error: false, building: false });
 }
 
 function addIngredient(state, action) {
     const updatedIngredients = updateObject(state.ingredients, { [action.ingredientType]: state.ingredients[action.ingredientType] + 1 });
-    return updateObject(state, { ingredients: updatedIngredients, totalPrice: state.totalPrice + INGREDIENT_PRICES[action.ingredientType] });
+    return updateObject(state, { ingredients: updatedIngredients, totalPrice: state.totalPrice + INGREDIENT_PRICES[action.ingredientType], building: true });
+}
+
+function removeIngredient(state, action) {
+    const updatedIngredients = updateObject(state.ingredients, { [action.ingredientType]: state.ingredients[action.ingredientType] - 1 });
+    return updateObject(state, { ingredients: updatedIngredients, totalPrice: state.totalPrice - INGREDIENT_PRICES[action.ingredientType], building: true });
 }
 
 const reducer = (state = initialState, action) => {
