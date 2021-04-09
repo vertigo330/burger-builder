@@ -12,5 +12,6 @@ export {
 
 export {
     authenticate,
-    logout
+    logout,
+    tryAutoLogin
 } from './auth'

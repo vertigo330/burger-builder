@@ -10,8 +10,6 @@ const input = (props)=> {
         inputClasses.push(classes.Invalid);
     }
 
-    console.log(inputClasses.join(' '));
-
     switch(props.elementType) {
         case('input'):
             inputElement = <input className={inputClasses.join(' ')} {...props.elementConfig} value={props.value}  onChange={props.changed} />;
@@ -30,7 +28,7 @@ const input = (props)=> {
                 );
             break;
         default:
-            inputElement = <input className={inputClasses.join(' ')} {...props.elementConfig} value={props.value} onChange={props.changed}   onChange={props.changed} />;
+            inputElement = <input className={inputClasses.join(' ')} {...props.elementConfig} value={props.value} onChange={props.changed} />;
             break;
     }
 

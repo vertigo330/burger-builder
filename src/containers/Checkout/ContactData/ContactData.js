@@ -8,6 +8,7 @@ import axiosInstance from '../../../axios-orders';
 import withError from '../../../hoc/WithErrorHandler/withErrorHandler';
 import { connect } from 'react-redux';
 import * as actions from '../../../store/actions';
+import { checkValidity } from '../../../shared/Utility';
 
 class ContactData extends Component {
     state = {
@@ -95,31 +96,12 @@ class ContactData extends Component {
         isFormValid: false
     }
 
-    isValid = (rule, value) => {
-
-        let isValid = true;
-
-        if(rule.required) {
-            isValid = isValid && value.trim().length > 0;
-        }
-        
-        if(rule.minLength) {
-            isValid = isValid && value.trim().length >= rule.minLength;
-        }
-
-        if(rule.maxLength) {
-            isValid = isValid && value.trim().length <= rule.maxLength;
-        }
-
-        return isValid;
-    }
-
     formChangedHandler(event, id){
         const clonedState = {...this.state.orderForm};
         const clonedFormElement = {...clonedState[id]};
         
-        clonedFormElement.value = event.target.value;       
-        clonedFormElement.isValid = this.isValid(clonedFormElement.validation, clonedFormElement.value);
+        clonedFormElement.value = event.target.value;
+        clonedFormElement.isValid = checkValidity(clonedFormElement.validation, clonedFormElement.value);
         
         clonedFormElement.touched = true;
         clonedState[id] = clonedFormElement;
@@ -143,7 +125,8 @@ class ContactData extends Component {
         const order = {
             ingredients: this.props.ingredients,
             price: this.props.totalPrice,
-            contactData: formPostData
+            contactData: formPostData,
+            userId: this.props.userId
         };
 
         this.props.onPostOrder(order, this.props.token);
@@ -195,7 +178,8 @@ const mapStateToProps = state => {
         ingredients: state.burgerBuilder.ingredients,
         totalPrice: state.burgerBuilder.totalPrice,
         loading: state.order.loading,
-        token: state.auth.token
+        token: state.auth.token,
+        userId: state.auth.userId
     }
 }
 

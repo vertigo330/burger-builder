@@ -7,6 +7,7 @@ import Button from '../../components/UI/Button/Button';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import classes from './Auth.module.css';
 import * as action from '../../store/actions/index';
+import { checkValidity } from '../../shared/Utility';
 
 class Auth extends Component {
 
@@ -44,30 +45,6 @@ class Auth extends Component {
         }
     }
 
-    isValid = (rule, value) => {
-
-        let isValid = true;
-
-        if(rule.required) {
-            isValid = isValid && value.trim().length > 0;
-        }
-        
-        if(rule.minLength) {
-            isValid = isValid && value.trim().length >= rule.minLength;
-        }
-
-        if(rule.maxLength) {
-            isValid = isValid && value.trim().length <= rule.maxLength;
-        }
-
-        if(rule.isEmail){
-            const regexp = /^[a-zA-Z0-9]+@+[a-zA-Z0-9]+.+[A-z]/;
-            isValid = isValid && regexp.test(value);
-        }
-
-        return isValid;
-    }
-
     formChangedHandler = (event, id) => {
         const updatedForm = {
             ...this.state.authForm,
@@ -75,7 +52,7 @@ class Auth extends Component {
                 ...this.state.authForm[id],
                 value: event.target.value,
                 touched: true,
-                isValid: this.isValid(this.state.authForm[id].validation, event.target.value)
+                isValid: checkValidity(this.state.authForm[id].validation, event.target.value)
             }
         }
 
@@ -127,7 +104,7 @@ class Auth extends Component {
             if(this.props.isBuilding) {
                 authenticatedRedirect = <Redirect to="/checkout" />
             }
-            else{
+            else {
                 authenticatedRedirect = <Redirect to="/" />
             }
         }

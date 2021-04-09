@@ -25,6 +25,7 @@ export const authFailed = (err) => {
 export const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('expirationTime');
+    localStorage.removeItem('userId');
     return {
         type: actionType.AUTH_LOGOUT
     }
@@ -54,16 +55,38 @@ export const authenticate = (username, password, isSignup) => {
             returnSecureToken: true
         })
         .then((response)=>{
-            console.log(response);
             let expirationTime = new Date(new Date().getTime() + response.data.expiresIn * 1000);
             localStorage.setItem('token', response.data.idToken);
             localStorage.setItem('expirationTime', expirationTime);
+            localStorage.setItem('userId', response.data.localId);
             dispatch(authSucceeded(response.data.idToken, response.data.localId));
             dispatch(checkLogout(response.data.expiresIn));
         })
         .catch(err => {
-            console.log(err);
+            console.error(err);
             dispatch(authFailed(err.response.data.error));
         });
+    }
+}
+
+export const tryAutoLogin = () => {
+
+    return (dispatch) => {
+        const token = localStorage.getItem('token');
+        if(!token){
+            dispatch(logout());
+        }
+        else{
+            const expirationTime = new Date(localStorage.getItem('expirationTime'));
+            if(expirationTime < new Date()) {
+                dispatch(logout());
+            }
+            else{
+                const userId = localStorage.getItem('userId');
+                const timeoutSeconds = (expirationTime.getTime() - new Date().getTime()) / 1000;
+                dispatch(authSucceeded(token, userId));
+                dispatch(checkLogout(timeoutSeconds));
+            }
+        }
     }
 }

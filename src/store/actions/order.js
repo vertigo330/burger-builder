@@ -33,7 +33,6 @@ export const postOrderData = (orderData, token) => {
         dispatch(postOrderStarted());
         axiosInstance.post(`orders.json?auth=${token}`, orderData)
             .then(resp => {
-                console.log(resp.data)
                 dispatch(postOrderSucceeded(resp.data.name, orderData));
             })
             .catch(ex => {
@@ -63,10 +62,11 @@ export const fetchOrderFailed = (err) => {
     }
 }
 
-export const fetchOrder = (token) => {
+export const fetchOrder = (token, userId) => {
     return dispatch => {
         dispatch(fetchOrderStarted())
-        axiosInstance.get(`/orders.json?auth=${token}`)
+        const query = `auth=${token}&orderBy="userId"&equalTo="${userId}"`;
+        axiosInstance.get(`/orders.json?${query}`)
             .then(resp=>{
                 const fetchedOrders = [];
                 for(let key in resp.data)
